@@ -625,8 +625,8 @@ class Theme implements ThemeContract {
 	public function partial($view, $args = array())
 	{
 		$partialDir = $this->getThemeNamespace($this->getConfig('containerDir.partial'));
-
-		return $this->loadPartial($view, $partialDir, $args);
+		$path = $partialDir.'.'.$view;
+		return $this->loadPartial($view, $path, $args);
 	}
 
 	/**
@@ -644,6 +644,18 @@ class Theme implements ThemeContract {
 		return $this->partial($view, $args);
 	}
 
+	public function partialWithScope($view, $args = array(), $type = null)
+	{
+		$viewDir = $this->getConfig('containerDir.view');
+
+		// Add namespace to find in a theme path.
+		$path = $this->getThemeNamespace($viewDir.'.'.$view);
+
+		// Keeping arguments.
+		$this->arguments = $args;
+
+		return $this->loadPartial($view, $path, $args);
+	}
 	/**
 	 * Load a partial
 	 *
@@ -653,10 +665,8 @@ class Theme implements ThemeContract {
 	 * @throws UnknownPartialFileException
 	 * @return mixed
 	 */
-	public function loadPartial($view, $partialDir, $args)
+	public function loadPartial($view, $path, $args)
 	{
-		$path = $partialDir.'.'.$view;
-
 		if ( ! $this->view->exists($path))
 		{
 			throw new UnknownPartialFileException("Partial view [$view] not found.");
@@ -689,8 +699,8 @@ class Theme implements ThemeContract {
 		catch (UnknownPartialFileException $e)
 		{
 			$partialDir = $this->getConfig('containerDir.partial');
-
-			return $this->loadPartial($view, $partialDir, $args);
+			$path = $partialDir.'.'.$view;
+			return $this->loadPartial($view, $path, $args);
 		}
 	}
 
@@ -714,6 +724,11 @@ class Theme implements ThemeContract {
 
 		$widgetNamespace = $this->getConfig('namespaces.widget');
 
+
+		// $chuck = explode(".", $className);
+		// $className = $widgetNamespace . "\\";
+
+		// $className .= implode('\\', $chuck);
 		$className = $widgetNamespace.'\\'.$className;
 
 		if ( ! $instance = array_get($widgets, $className))
