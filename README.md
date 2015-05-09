@@ -407,6 +407,10 @@ echo Theme::partial('header', array('title' => 'Header'));
 // Partial with current layout specific.
 // This will look up up to "public/themes/[theme]/partials/[CURRENT_LAYOUT]/header.php"
 echo Theme::partialWithLayout('header', array('title' => 'Header'));
+
+// Partial with active theme scpecific specific.
+// This will look up up to "public/themes/[theme]/views/dashboard/partial/index.php"
+echo Theme::partialWithScope('dashboard.partial.index', array('title' => 'Header'));
 ~~~
 
 Finding from both theme's partial and application's partials.
